@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
-import 'package:health_connect/Health%20Connects/presentation/routes/appPages.dart';
+import 'package:health_connect/Health%20Connects/presentation/routes/app_pages.dart';
 import 'package:health_connect/Health%20Connects/presentation/widget/info_card.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:provider/provider.dart';
@@ -16,17 +17,19 @@ void main() {
   );
 
   setUp(() {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      if (methodCall.method == 'checkPermissions' ||
-          methodCall.method == 'requestPermissions') {
-        return true;
-      }
-      return null;
-    });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          if (methodCall.method == 'checkPermissions' ||
+              methodCall.method == 'requestPermissions') {
+            return true;
+          }
+          return null;
+        });
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   testWidgets('Full app flow test with permissions mocked', (
@@ -72,12 +75,16 @@ void main() {
 
     // Get the text data from first Text widget of the InfoCard
     final initialStepText = (textWidgets.first.widget as Text).data!;
-    print('Initial Steps Text: $initialStepText');
+    if (kDebugMode) {
+      print('Initial Steps Text: $initialStepText');
+    }
 
     // Verify presence of Performance HUD with build and fps data
     expect(find.textContaining('build:'), findsOneWidget);
     expect(find.textContaining('fps:'), findsOneWidget);
 
-    print('SUCCESS: Dashboard rendered with step info and performance HUD.');
+    if (kDebugMode) {
+      print('SUCCESS: Dashboard rendered with step info and performance HUD.');
+    }
   });
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:health_connect/Health%20Connects/presentation/routes/appPages.dart';
+import 'package:health_connect/Health%20Connects/presentation/routes/app_pages.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

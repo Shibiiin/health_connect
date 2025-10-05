@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/data_point.dart';
-import 'lineChart_widget.dart';
+import 'line_chart_widget.dart';
 
 class ChartContainer extends StatelessWidget {
   final String title;

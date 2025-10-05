@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../data/repository/health_repository.dart';
-import '../routes/appRoutes.dart';
+import '../routes/app_routes.dart';
 
 class HealthSplashScreen extends StatefulWidget {
   const HealthSplashScreen({super.key});
 
   @override
-  _HealthSplashScreenState createState() => _HealthSplashScreenState();
+  HealthSplashScreenState createState() => HealthSplashScreenState();
 }
 
-class _HealthSplashScreenState extends State<HealthSplashScreen>
+class HealthSplashScreenState extends State<HealthSplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _walkingAnimation;
@@ -53,15 +53,16 @@ class _HealthSplashScreenState extends State<HealthSplashScreen>
     _controller.forward();
 
     Timer(Duration(seconds: 3), () {
-      checkPermissionsAndNavigate();
+      checkPermissionsAndNavigate(context);
     });
   }
 
-  Future<void> checkPermissionsAndNavigate() async {
+  Future<void> checkPermissionsAndNavigate(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 1));
 
     final healthRepo = HealthRepository();
     final bool hasPermission = await healthRepo.checkPermissions();
+
     if (!context.mounted) return;
 
     if (hasPermission) {

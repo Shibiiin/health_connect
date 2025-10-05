@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_connect/Health%20Connects/domain/entities/data_point.dart';
-import 'package:health_connect/Health%20Connects/presentation/widget/lineChart_widget.dart';
+import 'package:health_connect/Health%20Connects/presentation/widget/line_chart_widget.dart';
 
 void main() {
   testWidgets('LineChart Golden Test', (WidgetTester tester) async {

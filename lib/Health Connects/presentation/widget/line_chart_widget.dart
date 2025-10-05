@@ -17,10 +17,10 @@ class LineChart extends StatefulWidget {
   });
 
   @override
-  _LineChartState createState() => _LineChartState();
+  LineChartState createState() => LineChartState();
 }
 
-class _LineChartState extends State<LineChart>
+class LineChartState extends State<LineChart>
     with SingleTickerProviderStateMixin {
   double _zoom = 1.0;
   double _offset = 0.0;

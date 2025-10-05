@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_connect/Health%20Connects/domain/entities/infoCard_modal.dart';
+import 'package:health_connect/Health%20Connects/domain/entities/info_card_modal.dart';
 
 class InfoCard extends StatelessWidget {
   final InfoCardModal modal;

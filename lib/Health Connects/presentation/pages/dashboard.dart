@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
 import 'package:provider/provider.dart';
 
-import '../../domain/entities/infoCard_modal.dart';
+import '../../domain/entities/info_card_modal.dart';
 import '../widget/chart_widget.dart';
 import '../widget/info_card.dart';
 import '../widget/performance_hud.dart';

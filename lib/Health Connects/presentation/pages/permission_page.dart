@@ -1,7 +1,7 @@
 // lib/Health Connects/presentation/view/permissions_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_connect/Health%20Connects/presentation/routes/appRoutes.dart';
+import 'package:health_connect/Health%20Connects/presentation/routes/app_routes.dart';
 
 import '../../data/repository/health_repository.dart';
 

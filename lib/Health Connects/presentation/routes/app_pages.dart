@@ -3,7 +3,7 @@ import 'package:health_connect/Health%20Connects/presentation/pages/dashboard.da
 import 'package:health_connect/Health%20Connects/presentation/pages/permission_page.dart';
 import 'package:health_connect/Health%20Connects/presentation/pages/splash_screen.dart';
 
-import 'appRoutes.dart';
+import 'app_routes.dart';
 
 class AppPages {
   late final GoRouter goRouter = GoRouter(
