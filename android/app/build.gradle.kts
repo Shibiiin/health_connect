@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.health_connect"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,8 +24,8 @@ android {
         applicationId = "com.example.health_connect"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 29
+        targetSdk = 33
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -37,6 +37,16 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+//dependencies {
+////    implementation ("androidx.health.connect:connect-client:1.1.0-alpha12")
+//    implementation("androidx.activity:activity-ktx:1.8.0")
+//    implementation("androidx.health.connect:connect-client:1.2.0-alpha01")
+//
+//}
+dependencies {
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.health.connect:connect-client:1.2.0-alpha01")
 }
 
 flutter {
