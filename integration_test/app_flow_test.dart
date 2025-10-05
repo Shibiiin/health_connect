@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
@@ -10,14 +11,33 @@ import 'package:provider/provider.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Full app flow test with permission mocked', (
+  const MethodChannel channel = MethodChannel(
+    'com.example.health_connect/method_channel',
+  );
+
+  setUp(() {
+    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+      if (methodCall.method == 'checkPermissions' ||
+          methodCall.method == 'requestPermissions') {
+        return true;
+      }
+      return null;
+    });
+  });
+
+  tearDown(() {
+    channel.setMockMethodCallHandler(null);
+  });
+
+  testWidgets('Full app flow test with permissions mocked', (
     WidgetTester tester,
   ) async {
-    // TODO: Mock platform channel to return permission granted or mock repository for real app
+    final dashboardController = DashboardController();
 
+    // Pump the widget tree with the provider
     await tester.pumpWidget(
-      ChangeNotifierProvider(
-        create: (context) => DashboardController(),
+      ChangeNotifierProvider<DashboardController>.value(
+        value: dashboardController,
         child: ScreenUtilInit(
           designSize: const Size(360, 690),
           builder: (_, child) {
@@ -30,38 +50,34 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle(
-      const Duration(seconds: 10),
-    ); // Allow routing & UI to stabilize
+    // Wait long enough for animations, routing, and rendering
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    // If your app shows a permission dialog, you may detect and tap allow button here:
-    final allowButton = find.text(
-      'Allow',
-    ); // or adapt to your permission button text
-    if (allowButton.evaluate().isNotEmpty) {
-      await tester.tap(allowButton);
-      await tester.pumpAndSettle(const Duration(seconds: 5));
-    }
-
-    // Find InfoCard with "Steps" title
-    final infoCards = find.byWidgetPredicate(
+    // Find InfoCard widget with title containing "Steps"
+    final infoCardFinder = find.byWidgetPredicate(
       (widget) => widget is InfoCard && widget.modal.title.contains("Steps"),
     );
-    expect(infoCards, findsAtLeastNWidgets(1));
 
-    final textWidgetsFinder = find.descendant(
-      of: infoCards,
+    // Verify at least one InfoCard found
+    expect(infoCardFinder, findsWidgets);
+
+    // Find Text widgets inside that InfoCard
+    final textFinder = find.descendant(
+      of: infoCardFinder,
       matching: find.byType(Text),
     );
-    final textWidgets = textWidgetsFinder.evaluate();
-    expect(textWidgets.isNotEmpty, true);
-    final initialStepsText = (textWidgets.first.widget as Text).data!;
-    print('Initial steps: $initialStepsText');
 
-    // Check performance HUD info
+    final textWidgets = textFinder.evaluate();
+    expect(textWidgets.isNotEmpty, true);
+
+    // Get the text data from first Text widget of the InfoCard
+    final initialStepText = (textWidgets.first.widget as Text).data!;
+    print('Initial Steps Text: $initialStepText');
+
+    // Verify presence of Performance HUD with build and fps data
     expect(find.textContaining('build:'), findsOneWidget);
     expect(find.textContaining('fps:'), findsOneWidget);
 
-    print('SUCCESS: Dashboard shows steps info and performance HUD.');
+    print('SUCCESS: Dashboard rendered with step info and performance HUD.');
   });
 }
