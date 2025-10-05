@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
 import 'package:provider/provider.dart';
 
+import '../../domain/entities/infoCard_modal.dart';
 import '../widget/chart_widget.dart';
 import '../widget/info_card.dart';
 import '../widget/performance_hud.dart';
@@ -74,15 +75,36 @@ class DashboardWidget extends StatelessWidget {
               Center(
                 child: SizedBox(
                   height: 120,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.infoCards.length,
-                    shrinkWrap: true,
-                    separatorBuilder: (context, _) => const SizedBox(width: 25),
-                    itemBuilder: (context, index) {
-                      final card = controller.infoCards[index];
-                      return InfoCard(modal: card);
-                    },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InfoCard(
+                          modal: InfoCardModal(
+                            title: "Today's Steps",
+                            value: controller.totalSteps.toString(),
+                            icon: Icons.directions_walk,
+                            subValue: null,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF4CAF50), Color(0xFF45C7C1)],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: InfoCard(
+                          modal: InfoCardModal(
+                            title: "Current Heart Rate",
+                            value: "${controller.currentHeartRate} bpm",
+                            subValue: controller.heartRateTimestampAge,
+                            icon: Icons.favorite,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFF44336), Color(0xFFFF7597)],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -90,13 +112,20 @@ class DashboardWidget extends StatelessWidget {
 
               /// Steps chart container
               Expanded(
-                child: ListView.separated(
-                  itemCount: controller.chartData.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 16),
-                  itemBuilder: (context, index) {
-                    final chart = controller.chartData[index];
-                    return SizedBox(height: 200, child: ChartContainer(chart));
-                  },
+                flex: 2,
+                child: ChartContainer(
+                  title: controller.chartData[0].title,
+                  gradient: controller.chartData[0].gradient,
+                  data: controller.stepDataPoints,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                flex: 3,
+                child: ChartContainer(
+                  title: controller.chartData[1].title,
+                  gradient: controller.chartData[1].gradient,
+                  data: controller.heartRateDataPoints,
                 ),
               ),
             ],

@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:health_connect/Health%20Connects/domain/entities/chart_modal.dart';
+
+import '../../domain/entities/data_point.dart';
+import 'lineChart_widget.dart';
 
 class ChartContainer extends StatelessWidget {
-  final ChartModal modal;
+  final String title;
+  final Gradient? gradient;
+  final List<DataPoint> data;
 
-  const ChartContainer(this.modal, {super.key});
+  const ChartContainer({
+    super.key,
+    required this.title,
+    this.gradient,
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: modal.gradient,
+        gradient: gradient,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         boxShadow: [
@@ -27,7 +36,7 @@ class ChartContainer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              modal.title,
+              title,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -36,30 +45,16 @@ class ChartContainer extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.analytics_outlined,
-                        color: Colors.white.withOpacity(0.3),
-                        size: 40,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Chart Visualization',
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
+              child: LineChart(
+                data: data,
+                gradient: LinearGradient(
+                  colors: [
+                    gradient?.colors.first.withOpacity(0.4) ?? Colors.white,
+                    gradient?.colors.last.withOpacity(0.0) ??
+                        Colors.transparent,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
             ),
