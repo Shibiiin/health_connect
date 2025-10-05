@@ -4,7 +4,10 @@ import 'package:flutter/services.dart';
 import '../../domain/entities/data_point.dart';
 
 class HealthRepository {
-  static const _eventChannel = EventChannel('com.example.health_connect');
+  static const _eventChannel = EventChannel(
+    'com.example.health_connect/health_data',
+  );
+
   static const _methodChannel = MethodChannel(
     'com.example.health_connect/method_channel',
   );

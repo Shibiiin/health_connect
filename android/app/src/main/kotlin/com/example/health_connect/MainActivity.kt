@@ -1,11 +1,12 @@
 package com.example.health_connect
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.request.ReadRecordsRequest
@@ -21,18 +22,20 @@ import java.time.Instant
 
 class MainActivity : FlutterActivity() {
 
-    private val HEALTH_EVENT_CHANNEL = "com.example.health_connect/health_data"
-    private val HEALTH_METHOD_CHANNEL = "com.example.health_connect/method_channel"
+    companion object {
+        private const val HEALTH_EVENT_CHANNEL = "com.example.health_connect/health_data"
+        private const val HEALTH_METHOD_CHANNEL = "com.example.health_connect/method_channel"
+        private val PERMISSIONS = arrayOf(
+            "android.permission.health.READ_STEPS",
+            "android.permission.health.READ_HEART_RATE"
+        )
+        private const val REQUEST_CODE_PERMISSIONS = 1001
+    }
 
     private lateinit var healthConnectClient: HealthConnectClient
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
-
-    private val PERMISSIONS = arrayOf(
-        "android.permission.health.READ_STEPS",
-        "android.permission.health.READ_HEART_RATE"
-    )
-
     private var permissionResult: MethodChannel.Result? = null
+    private var eventSink: EventChannel.EventSink? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +48,7 @@ class MainActivity : FlutterActivity() {
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, HEALTH_EVENT_CHANNEL).setStreamHandler(
             object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
+                    eventSink = events
                     coroutineScope.launch {
                         if (hasPermissions()) {
                             readHealthData(events)
@@ -54,7 +58,9 @@ class MainActivity : FlutterActivity() {
                     }
                 }
 
-                override fun onCancel(arguments: Any?) {}
+                override fun onCancel(arguments: Any?) {
+                    eventSink = null
+                }
             }
         )
 
@@ -66,7 +72,7 @@ class MainActivity : FlutterActivity() {
                 }
                 "requestPermissions" -> {
                     permissionResult = result
-                    ActivityCompat.requestPermissions(this, PERMISSIONS, 1001)
+                    ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST_CODE_PERMISSIONS)
                 }
                 "promptHealthConnectUpdate" -> {
                     promptHealthConnectUpdate()
@@ -123,17 +129,35 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun promptHealthConnectUpdate() {
-        // Your existing code here
+        val providerPackageName = "com.google.android.apps.healthdata"
+        val uriString = "market://details?id=$providerPackageName&url=healthconnect%3A%2F%2Fonboarding"
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setPackage("com.android.vending")
+            data = Uri.parse(uriString)
+            putExtra("overlay", true)
+            putExtra("callerId", packageName)
+        }
+        startActivity(intent)
     }
 
-    // Handle permission request result callback
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                                            grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1001 && permissionResult != null) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS && permissionResult != null) {
             val granted = grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }
             permissionResult?.success(granted)
             permissionResult = null
+            if (granted) {
+                // Optionally read health data right after permission granted and send updates
+                eventSink?.let {
+                    coroutineScope.launch {
+                        readHealthData(it)
+                    }
+                }
+            }
         }
     }
 }

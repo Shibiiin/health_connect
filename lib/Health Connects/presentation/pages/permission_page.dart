@@ -1,8 +1,9 @@
 // lib/Health Connects/presentation/view/permissions_screen.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_connect/Health%20Connects/presentation/routes/appRoutes.dart';
 
 import '../../data/repository/health_repository.dart';
-import 'dashboard.dart';
 
 class PermissionsScreen extends StatelessWidget {
   const PermissionsScreen({super.key});
@@ -12,9 +13,7 @@ class PermissionsScreen extends StatelessWidget {
     final bool granted = await healthRepo.requestPermissions();
 
     if (granted && context.mounted) {
-      Navigator.of(
-        context,
-      ).pushReplacement(MaterialPageRoute(builder: (_) => const Dashboard()));
+      context.go(AppRoutes.dashboard);
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

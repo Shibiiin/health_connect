@@ -3,10 +3,14 @@
     package="com.example.health_connect">
 
     <!-- ✅ Health Connect permissions -->
-    <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
-    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"/>
-    <uses-permission android:name="android.permission.health.READ_STEPS"/>
-    <uses-permission android:name="android.permission.health.WRITE_STEPS"/>
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE"
+        tools:ignore="HealthConnectPolicy" />
+    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"
+        tools:ignore="HealthConnectPolicy" />
+    <uses-permission android:name="android.permission.health.READ_STEPS"
+        tools:ignore="HealthConnectPolicy" />
+    <uses-permission android:name="android.permission.health.WRITE_STEPS"
+        tools:ignore="HealthConnectPolicy" />
 
     <!-- ✅ Required for Health Connect permissions management -->
     <uses-permission android:name="android.permission.START_VIEW_PERMISSION_USAGE" tools:ignore="ProtectedPermissions"/>
@@ -22,7 +26,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="health_connect"
+        android:label="Health Connect"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
