@@ -134,10 +134,13 @@ class DashboardWidget extends StatelessWidget {
           ),
         ),
 
-        const Positioned(
+        Positioned(
           bottom: 16,
           right: 16,
-          child: PerformanceHud(buildTimeMs: '4.2ms', fps: '60'),
+          child: PerformanceHud(
+            buildTimeMs: controller.averageBuildTimeMs,
+            fps: controller.fps,
+          ),
         ),
       ],
     );

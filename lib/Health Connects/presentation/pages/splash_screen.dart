@@ -1,8 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../data/repository/health_repository.dart';
+import '../routes/appRoutes.dart';
 
 class HealthSplashScreen extends StatefulWidget {
+  const HealthSplashScreen({super.key});
+
   @override
   _HealthSplashScreenState createState() => _HealthSplashScreenState();
 }
@@ -46,7 +52,23 @@ class _HealthSplashScreenState extends State<HealthSplashScreen>
 
     _controller.forward();
 
-    Timer(Duration(seconds: 3), () {});
+    Timer(Duration(seconds: 3), () {
+      checkPermissionsAndNavigate();
+    });
+  }
+
+  Future<void> checkPermissionsAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 1));
+
+    final healthRepo = HealthRepository();
+    final bool hasPermission = await healthRepo.checkPermissions();
+    if (!context.mounted) return;
+
+    if (hasPermission) {
+      context.go(AppRoutes.dashboard);
+    } else {
+      context.go(AppRoutes.permissionPage);
+    }
   }
 
   @override
