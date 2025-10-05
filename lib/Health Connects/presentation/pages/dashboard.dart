@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +8,19 @@ import '../widget/chart_widget.dart';
 import '../widget/info_card.dart';
 import '../widget/performance_hud.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
+
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<DashboardController>().init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,19 +33,22 @@ class Dashboard extends StatelessWidget {
         elevation: 0,
         toolbarHeight: kToolbarHeight + 20,
         actions: [
-          IconButton(
-            icon: Icon(
-              controller.isSimulating ? Icons.stop_circle : Icons.play_circle,
-              color: controller.isSimulating
-                  ? Colors.redAccent
-                  : Colors.greenAccent,
+          if (kDebugMode)
+            IconButton(
+              key: const ValueKey('simsource_toggle_button'),
+              icon: Icon(
+                controller.isSimulating ? Icons.stop_circle : Icons.play_circle,
+                color: controller.isSimulating
+                    ? Colors.redAccent
+                    : Colors.greenAccent,
+              ),
+              tooltip: 'Toggle SimSource',
+              onPressed: () {
+                context.read<DashboardController>().toggleSimulation();
+              },
             ),
-            tooltip: 'Toggle SimSource',
-            onPressed: () {
-              context.read<DashboardController>().toggleSimulation();
-            },
-          ),
         ],
+
         foregroundColor: Colors.white,
       ),
       body: Container(
@@ -134,14 +149,15 @@ class DashboardWidget extends StatelessWidget {
           ),
         ),
 
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: PerformanceHud(
-            buildTimeMs: controller.averageBuildTimeMs,
-            fps: controller.fps,
+        if (kDebugMode)
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: PerformanceHud(
+              buildTimeMs: controller.averageBuildTimeMs,
+              fps: controller.fps,
+            ),
           ),
-        ),
       ],
     );
   }

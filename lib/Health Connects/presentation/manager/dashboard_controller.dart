@@ -11,10 +11,11 @@ import '../../domain/entities/chart_modal.dart';
 import '../../domain/entities/data_point.dart';
 
 class DashboardController extends ChangeNotifier {
-  DashboardController() {
+  void init() {
     listenToHealthData();
     initPerformanceListener();
   }
+
   final HealthRepository _healthRepository = HealthRepository();
   StreamSubscription? _healthSubscription;
 

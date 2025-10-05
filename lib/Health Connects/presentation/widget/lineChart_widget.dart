@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
-import 'package:provider/provider.dart';
 
 import '../../domain/entities/data_point.dart';
 
@@ -28,7 +26,6 @@ class _LineChartState extends State<LineChart>
   double _offset = 0.0;
   Offset? _tapPosition;
 
-  // Gesture start points
   double _startZoom = 1.0;
   double _startOffset = 0.0;
   late AnimationController _animationController;
@@ -59,14 +56,7 @@ class _LineChartState extends State<LineChart>
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<DashboardController>();
     return GestureDetector(
-      // onScaleStart: (details) {
-      //   setState(() {
-      //     _startZoom = _zoom;
-      //     _startOffset = _offset;
-      //   });
-      // },
       onScaleStart: (details) {
         setState(() {
           _startZoom = _zoom;
@@ -74,10 +64,6 @@ class _LineChartState extends State<LineChart>
       },
       onScaleUpdate: (details) {
         setState(() {
-          // _zoom = (_startZoom * details.scale).clamp(1.0, 5.0);
-          // _offset = _startOffset + details.focalPointDelta.dx;
-          // _tapPosition = null;
-
           _zoom = (_startZoom * details.scale).clamp(1.0, 5.0);
           _offset += details.focalPointDelta.dx;
           _tapPosition = null;
@@ -88,11 +74,7 @@ class _LineChartState extends State<LineChart>
           _tapPosition = details.localPosition;
         });
       },
-      // onTapUp: (details) {
-      //   setState(() {
-      //     _tapPosition = null;
-      //   });
-      // },
+
       child: ClipRRect(
         child: CustomPaint(
           painter: LineChartPainter(

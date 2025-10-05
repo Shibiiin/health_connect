@@ -15,9 +15,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.time.Instant
 
 class MainActivity : FlutterActivity() {
@@ -34,6 +32,7 @@ class MainActivity : FlutterActivity() {
 
     private lateinit var healthConnectClient: HealthConnectClient
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private var pollingJob: Job? = null
     private var permissionResult: MethodChannel.Result? = null
     private var eventSink: EventChannel.EventSink? = null
 
@@ -49,16 +48,11 @@ class MainActivity : FlutterActivity() {
             object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
                     eventSink = events
-                    coroutineScope.launch {
-                        if (hasPermissions()) {
-                            readHealthData(events)
-                        } else {
-                            events.error("UNAUTHORIZED", "Permissions not granted.", null)
-                        }
-                    }
+                    startPollingHealthData()
                 }
 
                 override fun onCancel(arguments: Any?) {
+                    stopPollingHealthData()
                     eventSink = null
                 }
             }
@@ -67,8 +61,7 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, HEALTH_METHOD_CHANNEL).setMethodCallHandler { call, result ->
             when (call.method) {
                 "checkPermissions" -> coroutineScope.launch {
-                    val granted = hasPermissions()
-                    result.success(granted)
+                    result.success(hasPermissions())
                 }
                 "requestPermissions" -> {
                     permissionResult = result
@@ -83,9 +76,26 @@ class MainActivity : FlutterActivity() {
         }
     }
 
+    private fun startPollingHealthData() {
+        pollingJob?.cancel()
+        pollingJob = coroutineScope.launch {
+            while (isActive) {
+                if (hasPermissions()) {
+                    eventSink?.let { readHealthData(it) }
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    private fun stopPollingHealthData() {
+        pollingJob?.cancel()
+        pollingJob = null
+    }
+
     private suspend fun hasPermissions(): Boolean {
-        return PERMISSIONS.all { perm ->
-            ContextCompat.checkSelfPermission(this, perm) == PackageManager.PERMISSION_GRANTED
+        return PERMISSIONS.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
     }
 
@@ -140,18 +150,13 @@ class MainActivity : FlutterActivity() {
         startActivity(intent)
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS && permissionResult != null) {
             val granted = grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }
             permissionResult?.success(granted)
             permissionResult = null
             if (granted) {
-                // Optionally read health data right after permission granted and send updates
                 eventSink?.let {
                     coroutineScope.launch {
                         readHealthData(it)
