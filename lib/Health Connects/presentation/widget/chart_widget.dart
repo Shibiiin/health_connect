@@ -7,12 +7,14 @@ class ChartContainer extends StatelessWidget {
   final String title;
   final Gradient? gradient;
   final List<DataPoint> data;
+  final bool startYAxisAtZero;
 
   const ChartContainer({
     super.key,
     required this.title,
     this.gradient,
     required this.data,
+    this.startYAxisAtZero = false,
   });
 
   @override
@@ -56,6 +58,7 @@ class ChartContainer extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
+                startYAxisAtZero: startYAxisAtZero,
               ),
             ),
           ],
