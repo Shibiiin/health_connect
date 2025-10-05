@@ -25,6 +25,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<DashboardController>();
+    print("Steps in context: ${controller.totalSteps}");
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

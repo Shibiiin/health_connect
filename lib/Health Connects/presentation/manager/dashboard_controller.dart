@@ -155,20 +155,35 @@ class DashboardController extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _lastStepCount = 0;
+
   void listenToHealthData() {
     _healthSubscription?.cancel();
     _healthSubscription = _healthRepository.healthDataStream.listen((
       dataPoint,
     ) {
       if (dataPoint.type == "steps") {
-        _totalSteps += dataPoint.value.toInt();
-        stepDataPoints.add(dataPoint);
-        if (stepDataPoints.length > 100) stepDataPoints.removeAt(0);
+        final currentStepCount = dataPoint.value.toInt();
+        final delta = currentStepCount - _lastStepCount;
+        if (delta > 0) {
+          _totalSteps += delta;
+          _lastStepCount = currentStepCount;
+          stepDataPoints.add(dataPoint);
+          if (stepDataPoints.length > 100) stepDataPoints.removeAt(0);
+
+          debugPrint(
+            "Step count received: $currentStepCount, delta: $delta, totalSteps: $_totalSteps",
+          );
+        }
       } else if (dataPoint.type == "heartRate") {
         _currentHeartRate = dataPoint.value.toInt();
         _lastHeartRateTimestamp = dataPoint.timestamp;
         heartRateDataPoints.add(dataPoint);
         if (heartRateDataPoints.length > 100) heartRateDataPoints.removeAt(0);
+
+        debugPrint(
+          "Heart rate received: $_currentHeartRate bpm at $_lastHeartRateTimestamp",
+        );
       }
       notifyListeners();
     });

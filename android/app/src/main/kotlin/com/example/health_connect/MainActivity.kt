@@ -17,6 +17,7 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import kotlinx.coroutines.*
 import java.time.Instant
+import android.util.Log
 
 class MainActivity : FlutterActivity() {
 
@@ -109,12 +110,14 @@ class MainActivity : FlutterActivity() {
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
                 )
             )
+            Log.d("HealthConnect", "Successfully read ${stepsResponse.records.size} steps records")
             for (stepRecord in stepsResponse.records) {
                 val dataMap = mapOf(
                     "type" to "steps",
                     "value" to stepRecord.count,
                     "timestamp" to stepRecord.startTime.toEpochMilli()
                 )
+                Log.d("HealthConnect", "Step record read: $dataMap")
                 runOnUiThread { events.success(dataMap) }
             }
             val heartRateResponse = healthConnectClient.readRecords(
@@ -123,6 +126,7 @@ class MainActivity : FlutterActivity() {
                     timeRangeFilter = TimeRangeFilter.between(startTime, endTime)
                 )
             )
+            Log.d("HealthConnect", "Successfully read ${heartRateResponse.records.size} heart rate records")
             for (hrRecord in heartRateResponse.records) {
                 for (sample in hrRecord.samples) {
                     val dataMap = mapOf(
@@ -130,10 +134,12 @@ class MainActivity : FlutterActivity() {
                         "value" to sample.beatsPerMinute,
                         "timestamp" to sample.time.toEpochMilli()
                     )
+                    Log.d("HealthConnect", "Heart rate sample read: $dataMap")
                     runOnUiThread { events.success(dataMap) }
                 }
             }
         } catch (e: Exception) {
+            Log.e("HealthConnect", "Failed to read health data: ${e.message}")
             runOnUiThread { events.error("ERROR", "Failed to read health data", e.message) }
         }
     }
