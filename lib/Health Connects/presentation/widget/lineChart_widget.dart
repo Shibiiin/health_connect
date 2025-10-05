@@ -61,16 +61,25 @@ class _LineChartState extends State<LineChart>
   Widget build(BuildContext context) {
     final controller = context.watch<DashboardController>();
     return GestureDetector(
+      // onScaleStart: (details) {
+      //   setState(() {
+      //     _startZoom = _zoom;
+      //     _startOffset = _offset;
+      //   });
+      // },
       onScaleStart: (details) {
         setState(() {
           _startZoom = _zoom;
-          _startOffset = _offset;
         });
       },
       onScaleUpdate: (details) {
         setState(() {
+          // _zoom = (_startZoom * details.scale).clamp(1.0, 5.0);
+          // _offset = _startOffset + details.focalPointDelta.dx;
+          // _tapPosition = null;
+
           _zoom = (_startZoom * details.scale).clamp(1.0, 5.0);
-          _offset = _startOffset + details.focalPointDelta.dx;
+          _offset += details.focalPointDelta.dx;
           _tapPosition = null;
         });
       },
@@ -267,14 +276,11 @@ class LineChartPainter extends CustomPainter {
     double displayRange,
   ) {
     final coordinates = <Offset>[];
-    // Calculate the full width of the chart content if it were all on screen
     final totalContentWidth = size.width * zoom;
-    // Calculate the maximum possible offset (how far you can pan left)
     final maxHorizontalOffset = (totalContentWidth - size.width).clamp(
       0.0,
       double.infinity,
     );
-    // Clamp the current offset to ensure you can't pan past the content boundaries
     final clampedOffset = offset.clamp(-maxHorizontalOffset, 0.0);
 
     for (int i = 0; i < data.length; i++) {
@@ -374,7 +380,7 @@ class LineChartPainter extends CustomPainter {
     return oldDelegate.data != data ||
         oldDelegate.zoom != zoom ||
         oldDelegate.offset != offset ||
-        oldDelegate.tapPosition != tapPosition;
-    oldDelegate.startYAxisAtZero != startYAxisAtZero;
+        oldDelegate.tapPosition != tapPosition ||
+        oldDelegate.startYAxisAtZero != startYAxisAtZero;
   }
 }
