@@ -159,11 +159,6 @@ class _HealthSplashScreenState extends State<HealthSplashScreen>
     return SizedBox(
       width: 80,
       height: 80,
-      // decoration: BoxDecoration(
-      //   color: Colors.white.withOpacity(0.1),
-      //   shape: BoxShape.circle,
-      //   border: Border.all(color: Color(0xFF4CAF50).withOpacity(0.8), width: 2),
-      // ),
       child: Icon(Icons.directions_walk, color: Color(0xFF4CAF50), size: 40),
     );
   }
@@ -173,9 +168,12 @@ class _HealthSplashScreenState extends State<HealthSplashScreen>
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         shape: BoxShape.circle,
-        border: Border.all(color: Color(0xFFF44336).withOpacity(0.8), width: 2),
+        border: Border.all(
+          color: Color(0xFFF44336).withValues(alpha: 0.8),
+          width: 2,
+        ),
       ),
       child: Icon(Icons.favorite, color: Color(0xFFF44336), size: 40),
     );

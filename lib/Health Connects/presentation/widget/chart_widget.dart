@@ -23,10 +23,13 @@ class ChartContainer extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: gradient,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.1),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -51,8 +54,9 @@ class ChartContainer extends StatelessWidget {
                 data: data,
                 gradient: LinearGradient(
                   colors: [
-                    gradient?.colors.first.withOpacity(0.4) ?? Colors.white,
-                    gradient?.colors.last.withOpacity(0.0) ??
+                    gradient?.colors.first.withValues(alpha: 0.4) ??
+                        Colors.white,
+                    gradient?.colors.last.withValues(alpha: 0.0) ??
                         Colors.transparent,
                   ],
                   begin: Alignment.topCenter,

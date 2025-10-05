@@ -21,19 +21,23 @@ class PerformanceHud extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.speed, color: Colors.white.withOpacity(0.7), size: 12),
+              Icon(
+                Icons.speed,
+                color: Colors.white.withValues(alpha: 0.7),
+                size: 12,
+              ),
               const SizedBox(width: 6),
               Text(
                 'build: $buildTimeMs, fps: $fps',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                 ),

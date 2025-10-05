@@ -49,8 +49,8 @@ class DashboardController extends ChangeNotifier {
       title: 'Steps vs. Time (Last 60 min)',
       gradient: LinearGradient(
         colors: [
-          const Color(0xFF4CAF50).withOpacity(0.3),
-          const Color(0xFF45C7C1).withOpacity(0.1),
+          const Color(0xFF4CAF50).withValues(alpha: 0.3),
+          const Color(0xFF45C7C1).withValues(alpha: 0.1),
         ],
       ),
     ),
@@ -58,8 +58,8 @@ class DashboardController extends ChangeNotifier {
       title: 'Heart Rate vs. Time',
       gradient: LinearGradient(
         colors: [
-          const Color(0xFFF44336).withOpacity(0.3),
-          const Color(0xFFFF7597).withOpacity(0.1),
+          const Color(0xFFF44336).withValues(alpha: 0.3),
+          const Color(0xFFFF7597).withValues(alpha: 0.1),
         ],
       ),
     ),

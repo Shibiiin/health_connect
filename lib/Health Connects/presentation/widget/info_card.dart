@@ -13,7 +13,7 @@ class InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -30,7 +30,7 @@ class InfoCard extends StatelessWidget {
                 Text(
                   modal.title,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -38,7 +38,7 @@ class InfoCard extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(modal.icon, color: Colors.white, size: 18),
@@ -60,7 +60,7 @@ class InfoCard extends StatelessWidget {
               Text(
                 modal.subValue!,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
                 ),

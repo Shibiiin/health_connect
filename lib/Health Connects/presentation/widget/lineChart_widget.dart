@@ -27,7 +27,6 @@ class _LineChartState extends State<LineChart>
   Offset? _tapPosition;
 
   double _startZoom = 1.0;
-  double _startOffset = 0.0;
   late AnimationController _animationController;
 
   @override
@@ -149,7 +148,7 @@ class LineChartPainter extends CustomPainter {
   /// y axis
   void _drawGridAndLabels(Canvas canvas, Size size) {
     final gridPaint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
+      ..color = Colors.white.withValues(alpha: 0.1)
       ..strokeWidth = 1;
 
     final (minY, maxY) = _calculateMinMaxY();
@@ -208,7 +207,7 @@ class LineChartPainter extends CustomPainter {
     TextAlign textAlign = TextAlign.center,
   }) {
     final textStyle = TextStyle(
-      color: Colors.white.withOpacity(0.5),
+      color: Colors.white.withValues(alpha: 0.5),
       fontSize: 10,
     );
     final textSpan = TextSpan(text: text, style: textStyle);
@@ -352,7 +351,7 @@ class LineChartPainter extends CustomPainter {
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(rect, Radius.circular(4)),
-      Paint()..color = Colors.black.withOpacity(0.7),
+      Paint()..color = Colors.black.withValues(alpha: 0.7),
     );
     textPainter.paint(canvas, Offset(tooltipX, tooltipY));
   }
