@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-customPrint(String message) {
+void customPrint(String message) {
   if (!kReleaseMode) {
     return debugPrint("\x1B[37m$message\x1B[0m"); //white
   }

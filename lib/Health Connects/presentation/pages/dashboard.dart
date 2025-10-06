@@ -25,9 +25,6 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<DashboardController>();
-    if (kDebugMode) {
-      // print("Steps in context: ${controller.totalSteps}");
-    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -76,17 +73,8 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class DashboardWidget extends StatefulWidget {
+class DashboardWidget extends StatelessWidget {
   const DashboardWidget({super.key});
-
-  @override
-  State<DashboardWidget> createState() => _DashboardWidgetState();
-}
-
-class _DashboardWidgetState extends State<DashboardWidget> {
-  // Future<void> refreshDashboard() async {
-  // context.read<DashboardController>().loadPersistence();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -138,32 +126,38 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               const SizedBox(height: 24),
 
               /// Steps chart container
-              ChartContainer(
-                title: controller.chartData[0].title,
-                gradient: controller.chartData[0].gradient,
-                data: controller.stepDataPoints,
-                startYAxisAtZero: true,
+              Expanded(
+                flex: 2,
+                child: ChartContainer(
+                  title: controller.chartData[0].title,
+                  gradient: controller.chartData[0].gradient,
+                  data: controller.stepDataPoints,
+                  startYAxisAtZero: true,
+                ),
               ),
               const SizedBox(height: 16),
-              ChartContainer(
-                title: controller.chartData[1].title,
-                gradient: controller.chartData[1].gradient,
-                data: controller.heartRateDataPoints,
-                startYAxisAtZero: false,
+              Expanded(
+                flex: 3,
+                child: ChartContainer(
+                  title: controller.chartData[1].title,
+                  gradient: controller.chartData[1].gradient,
+                  data: controller.heartRateDataPoints,
+                  startYAxisAtZero: false,
+                ),
               ),
             ],
           ),
         ),
 
-        if (kDebugMode)
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: PerformanceHud(
-              buildTimeMs: controller.averageBuildTimeMs,
-              fps: controller.fps,
-            ),
+        // if (kDebugMode)
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: PerformanceHud(
+            buildTimeMs: controller.averageBuildTimeMs,
+            fps: controller.fps,
           ),
+        ),
       ],
     );
   }

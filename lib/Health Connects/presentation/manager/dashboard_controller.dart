@@ -13,7 +13,6 @@ import '../../domain/entities/data_point.dart';
 
 class DashboardController extends ChangeNotifier {
   Timer? _periodicUiTimer;
-  Timer? _updateTimer;
   void init() {
     // loadPersistence().then((_) {
     listenToHealthData();
@@ -81,33 +80,6 @@ class DashboardController extends ChangeNotifier {
   ];
   final List<DataPoint> stepDataPoints = [];
   final List<DataPoint> heartRateDataPoints = [];
-
-  // Future<void> savePersistence() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //
-  //   await prefs.setInt('totalSteps', _totalSteps);
-  //   await prefs.setInt('currentHeartRate', _currentHeartRate);
-  //   await prefs.setInt('lastStepCount', _lastStepCount);
-  //   await prefs.setInt(
-  //     'lastHeartRateTimestamp',
-  //     _lastHeartRateTimestamp.millisecondsSinceEpoch,
-  //   );
-  // }
-  //
-  // Future<void> loadPersistence() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   _totalSteps = prefs.getInt('totalSteps') ?? 0;
-  //   _currentHeartRate = prefs.getInt('currentHeartRate') ?? 0;
-  //   _lastStepCount = prefs.getInt('lastStepCount') ?? 0;
-  //   final ts = prefs.getInt('lastHeartRateTimestamp');
-  //   if (ts != null)
-  //     _lastHeartRateTimestamp = DateTime.fromMillisecondsSinceEpoch(ts);
-  //
-  //   stepDataPoints.clear();
-  //   heartRateDataPoints.clear();
-  //
-  //   notifyListeners();
-  // }
 
   void initPerformanceListener() {
     SchedulerBinding.instance.addTimingsCallback(_onFrameTimings);

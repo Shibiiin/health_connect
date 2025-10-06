@@ -21,7 +21,7 @@ class HealthRepository {
       final num value = dataMap['value'];
       final int timestamp = dataMap['timestamp'];
 
-      successPrint("DATA POINT TYPE: ${type} - Value${value}");
+      successPrint("DATA POINT TYPE: $type - Value$value");
       return DataPoint(
         type: type,
         timestamp: DateTime.fromMillisecondsSinceEpoch(timestamp),

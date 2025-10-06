@@ -36,8 +36,6 @@ void main() {
     WidgetTester tester,
   ) async {
     final dashboardController = DashboardController();
-
-    // Pump the widget tree with the provider
     await tester.pumpWidget(
       ChangeNotifierProvider<DashboardController>.value(
         value: dashboardController,
@@ -53,18 +51,14 @@ void main() {
       ),
     );
 
-    // Wait long enough for animations, routing, and rendering
     await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    // Find InfoCard widget with title containing "Steps"
     final infoCardFinder = find.byWidgetPredicate(
       (widget) => widget is InfoCard && widget.modal.title.contains("Steps"),
     );
 
-    // Verify at least one InfoCard found
     expect(infoCardFinder, findsWidgets);
 
-    // Find Text widgets inside that InfoCard
     final textFinder = find.descendant(
       of: infoCardFinder,
       matching: find.byType(Text),
@@ -73,13 +67,11 @@ void main() {
     final textWidgets = textFinder.evaluate();
     expect(textWidgets.isNotEmpty, true);
 
-    // Get the text data from first Text widget of the InfoCard
     final initialStepText = (textWidgets.first.widget as Text).data!;
     if (kDebugMode) {
       print('Initial Steps Text: $initialStepText');
     }
 
-    // Verify presence of Performance HUD with build and fps data
     expect(find.textContaining('build:'), findsOneWidget);
     expect(find.textContaining('fps:'), findsOneWidget);
 

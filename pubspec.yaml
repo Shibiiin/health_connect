@@ -37,7 +37,6 @@ dependencies:
   go_router: ^16.2.4
   provider: ^6.1.5+1
   flutter_screenutil: ^5.9.3
-  shared_preferences: ^2.5.3
 
 
 dev_dependencies:
