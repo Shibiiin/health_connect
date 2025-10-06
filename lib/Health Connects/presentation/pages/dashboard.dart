@@ -19,12 +19,13 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    context.read<DashboardController>().init();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DashboardController>().init();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<DashboardController>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -34,17 +35,20 @@ class _DashboardState extends State<Dashboard> {
         toolbarHeight: kToolbarHeight + 20,
         actions: [
           if (kDebugMode)
-            IconButton(
-              key: const ValueKey('simsource_toggle_button'),
-              icon: Icon(
-                controller.isSimulating ? Icons.stop_circle : Icons.play_circle,
-                color: controller.isSimulating
-                    ? Colors.redAccent
-                    : Colors.greenAccent,
-              ),
-              tooltip: 'Toggle SimSource',
-              onPressed: () {
-                context.read<DashboardController>().toggleSimulation();
+            Selector<DashboardController, bool>(
+              selector: (_, ctrl) => ctrl.isSimulating,
+              builder: (context, isSimulating, child) {
+                return IconButton(
+                  key: const ValueKey('simsource_toggle_button'),
+                  icon: Icon(
+                    isSimulating ? Icons.stop_circle : Icons.play_circle,
+                    color: isSimulating ? Colors.redAccent : Colors.greenAccent,
+                  ),
+                  tooltip: 'Toggle SimSource',
+                  onPressed: () {
+                    context.read<DashboardController>().toggleSimulation();
+                  },
+                );
               },
             ),
         ],
@@ -78,75 +82,126 @@ class DashboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<DashboardController>();
+    final controller = Provider.of<DashboardController>(context, listen: false);
+
     return Stack(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ///info card
-              Center(
-                child: SizedBox(
-                  height: 120,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InfoCard(
-                          modal: InfoCardModal(
-                            title: "Today's Steps",
-                            value: controller.totalSteps.toString(),
-                            icon: Icons.directions_walk,
-                            subValue: null,
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF4CAF50), Color(0xFF45C7C1)],
+        Selector<DashboardController, int>(
+          selector: (_, ctrl) =>
+              ctrl.totalSteps +
+              ctrl.heartRateDataPoints.length +
+              ctrl.stepDataPoints.length,
+          builder: (context, healthDataHash, child) {
+            final dataController = Provider.of<DashboardController>(
+              context,
+              listen: false,
+            );
+
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await dataController.loadPersistence();
+                },
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ///info card
+                            Center(
+                              child: SizedBox(
+                                height: 120,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: InfoCard(
+                                        modal: InfoCardModal(
+                                          title: "Today's Steps",
+                                          value: dataController.totalSteps
+                                              .toString(),
+                                          icon: Icons.directions_walk,
+                                          subValue: null,
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFF4CAF50),
+                                              Color(0xFF45C7C1),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Selector<DashboardController, String>(
+                                        selector: (_, ctrl) =>
+                                            '${ctrl.currentHeartRate}|${ctrl.heartRateTimestampAge}',
+                                        builder: (context, heartRateKey, child) {
+                                          final hrController =
+                                              Provider.of<DashboardController>(
+                                                context,
+                                                listen: false,
+                                              );
+                                          return InfoCard(
+                                            modal: InfoCardModal(
+                                              title: "Current Heart Rate",
+                                              value:
+                                                  "${hrController.currentHeartRate} bpm",
+                                              subValue: hrController
+                                                  .heartRateTimestampAge,
+                                              icon: Icons.favorite,
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFF44336),
+                                                  Color(0xFFFF7597),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 24),
+
+                            /// Charts: Only rebuilds on data list update from the main Selector
+                            Expanded(
+                              flex: 2,
+                              child: ChartContainer(
+                                title: controller.chartData[0].title,
+                                gradient: controller.chartData[0].gradient,
+                                data: dataController.stepDataPoints,
+                                startYAxisAtZero: true,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Expanded(
+                              flex: 3,
+                              child: ChartContainer(
+                                title: controller.chartData[1].title,
+                                gradient: controller.chartData[1].gradient,
+                                data: dataController.heartRateDataPoints,
+                                startYAxisAtZero: false,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: InfoCard(
-                          modal: InfoCardModal(
-                            title: "Current Heart Rate",
-                            value: "${controller.currentHeartRate} bpm",
-                            subValue: controller.heartRateTimestampAge,
-                            icon: Icons.favorite,
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFFF44336), Color(0xFFFF7597)],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-
-              /// Steps chart container
-              Expanded(
-                flex: 2,
-                child: ChartContainer(
-                  title: controller.chartData[0].title,
-                  gradient: controller.chartData[0].gradient,
-                  data: controller.stepDataPoints,
-                  startYAxisAtZero: true,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                flex: 3,
-                child: ChartContainer(
-                  title: controller.chartData[1].title,
-                  gradient: controller.chartData[1].gradient,
-                  data: controller.heartRateDataPoints,
-                  startYAxisAtZero: false,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
 
         if (kDebugMode)

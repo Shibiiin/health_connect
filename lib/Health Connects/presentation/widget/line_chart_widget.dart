@@ -298,7 +298,6 @@ class LineChartPainter extends CustomPainter {
   }
 
   void _drawTooltip(Canvas canvas, Size size, List<Offset> coordinates) {
-    // ... (This function is correct, no changes, but I'll use the _formatTime helper for consistency)
     int closestIndex = -1;
     double minDistance = double.infinity;
 
