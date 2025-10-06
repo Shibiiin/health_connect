@@ -15,7 +15,6 @@ import '../../domain/entities/data_point.dart';
 
 class DashboardController extends ChangeNotifier {
   Timer? _periodicUiTimer;
-  Timer? _updateTimer;
   void init() {
     loadPersistence().then((_) {
       listenToHealthData();
@@ -130,8 +129,9 @@ class DashboardController extends ChangeNotifier {
     _currentHeartRate = prefs.getInt('currentHeartRate') ?? 0;
     _lastStepCount = prefs.getInt('lastStepCount') ?? 0;
     final ts = prefs.getInt('lastHeartRateTimestamp');
-    if (ts != null)
+    if (ts != null) {
       _lastHeartRateTimestamp = DateTime.fromMillisecondsSinceEpoch(ts);
+    }
 
     stepDataPoints.clear();
     heartRateDataPoints.clear();
@@ -166,18 +166,6 @@ class DashboardController extends ChangeNotifier {
     }
 
     notifyListeners();
-  }
-
-  List<dynamic> _safeDecode(String data) {
-    try {
-      return List<Map<String, dynamic>>.from(
-        (data.replaceAll("'", '"')).runes.isNotEmpty
-            ? (jsonDecode(data.replaceAll("'", "'")) as List)
-            : [],
-      );
-    } catch (_) {
-      return [];
-    }
   }
 
   void initPerformanceListener() {
