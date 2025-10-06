@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:health_connect/Health%20Connects/presentation/widget/common/custom_print.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/repository/health_repository.dart';
 import '../../domain/entities/chart_modal.dart';
@@ -17,14 +15,14 @@ class DashboardController extends ChangeNotifier {
   Timer? _periodicUiTimer;
   Timer? _updateTimer;
   void init() {
-    loadPersistence().then((_) {
-      listenToHealthData();
-      initPerformanceListener();
-      _periodicUiTimer?.cancel();
-      _periodicUiTimer = Timer.periodic(const Duration(seconds: 10), (_) {
-        notifyListeners();
-      });
+    // loadPersistence().then((_) {
+    listenToHealthData();
+    initPerformanceListener();
+    _periodicUiTimer?.cancel();
+    _periodicUiTimer = Timer.periodic(const Duration(seconds: 10), (_) {
+      notifyListeners();
     });
+    // });
   }
 
   final HealthRepository _healthRepository = HealthRepository();
@@ -84,101 +82,32 @@ class DashboardController extends ChangeNotifier {
   final List<DataPoint> stepDataPoints = [];
   final List<DataPoint> heartRateDataPoints = [];
 
-  Future<void> savePersistence() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await prefs.setInt('totalSteps', _totalSteps);
-    await prefs.setInt('currentHeartRate', _currentHeartRate);
-    await prefs.setInt('lastStepCount', _lastStepCount);
-    await prefs.setInt(
-      'lastHeartRateTimestamp',
-      _lastHeartRateTimestamp.millisecondsSinceEpoch,
-    );
-
-    await prefs.setString(
-      'stepDataPoints',
-      jsonEncode(
-        stepDataPoints
-            .map(
-              (e) => {
-                'timestamp': e.timestamp.millisecondsSinceEpoch,
-                'value': e.value,
-              },
-            )
-            .toList(),
-      ),
-    );
-
-    await prefs.setString(
-      'heartRateDataPoints',
-      jsonEncode(
-        heartRateDataPoints
-            .map(
-              (e) => {
-                'timestamp': e.timestamp.millisecondsSinceEpoch,
-                'value': e.value,
-              },
-            )
-            .toList(),
-      ),
-    );
-  }
-
-  Future<void> loadPersistence() async {
-    final prefs = await SharedPreferences.getInstance();
-    _totalSteps = prefs.getInt('totalSteps') ?? 0;
-    _currentHeartRate = prefs.getInt('currentHeartRate') ?? 0;
-    _lastStepCount = prefs.getInt('lastStepCount') ?? 0;
-    final ts = prefs.getInt('lastHeartRateTimestamp');
-    if (ts != null)
-      _lastHeartRateTimestamp = DateTime.fromMillisecondsSinceEpoch(ts);
-
-    stepDataPoints.clear();
-    heartRateDataPoints.clear();
-
-    final stepDataString = prefs.getString('stepDataPoints');
-    final heartRateDataString = prefs.getString('heartRateDataPoints');
-
-    if (stepDataString != null) {
-      final decoded = jsonDecode(stepDataString) as List;
-      stepDataPoints.addAll(
-        decoded.map(
-          (e) => DataPoint(
-            timestamp: DateTime.fromMillisecondsSinceEpoch(e['timestamp']),
-            value: (e['value'] as num).toDouble(),
-            type: 'Step',
-          ),
-        ),
-      );
-    }
-
-    if (heartRateDataString != null) {
-      final decoded = jsonDecode(heartRateDataString) as List;
-      heartRateDataPoints.addAll(
-        decoded.map(
-          (e) => DataPoint(
-            timestamp: DateTime.fromMillisecondsSinceEpoch(e['timestamp']),
-            value: (e['value'] as num).toDouble(),
-            type: 'Heart Rate',
-          ),
-        ),
-      );
-    }
-
-    notifyListeners();
-  }
-
-  List<dynamic> _safeDecode(String data) {
-    try {
-      return List<Map<String, dynamic>>.from(
-        (data.replaceAll("'", '"')).runes.isNotEmpty
-            ? (jsonDecode(data.replaceAll("'", "'")) as List)
-            : [],
-      );
-    } catch (_) {
-      return [];
-    }
-  }
+  // Future<void> savePersistence() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //
+  //   await prefs.setInt('totalSteps', _totalSteps);
+  //   await prefs.setInt('currentHeartRate', _currentHeartRate);
+  //   await prefs.setInt('lastStepCount', _lastStepCount);
+  //   await prefs.setInt(
+  //     'lastHeartRateTimestamp',
+  //     _lastHeartRateTimestamp.millisecondsSinceEpoch,
+  //   );
+  // }
+  //
+  // Future<void> loadPersistence() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   _totalSteps = prefs.getInt('totalSteps') ?? 0;
+  //   _currentHeartRate = prefs.getInt('currentHeartRate') ?? 0;
+  //   _lastStepCount = prefs.getInt('lastStepCount') ?? 0;
+  //   final ts = prefs.getInt('lastHeartRateTimestamp');
+  //   if (ts != null)
+  //     _lastHeartRateTimestamp = DateTime.fromMillisecondsSinceEpoch(ts);
+  //
+  //   stepDataPoints.clear();
+  //   heartRateDataPoints.clear();
+  //
+  //   notifyListeners();
+  // }
 
   void initPerformanceListener() {
     SchedulerBinding.instance.addTimingsCallback(_onFrameTimings);
@@ -256,7 +185,7 @@ class DashboardController extends ChangeNotifier {
     if (stepDataPoints.length > 100) stepDataPoints.removeAt(0);
     if (heartRateDataPoints.length > 100) heartRateDataPoints.removeAt(0);
 
-    savePersistence();
+    // savePersistence();
     notifyListeners();
   }
 
@@ -289,7 +218,7 @@ class DashboardController extends ChangeNotifier {
           successPrint(
             "Step count received: $currentStepCount, delta: $delta, totalSteps: $_totalSteps",
           );
-          savePersistence();
+          // savePersistence();
           notifyListeners();
         }
       }
