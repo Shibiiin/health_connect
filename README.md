@@ -1,6 +1,7 @@
 Flutter Health Connect Realtime Dashboard
 This project is a hiring task to build a high-performance, real-time dashboard for displaying Steps and Heart Rate data from Health Connect on Android, with zero network I/O.
 
+App Starting Step -> Lib / main.dart
 
 1. Setup and Installation
    A. Device Requirements (Constraints)
