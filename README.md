@@ -39,8 +39,6 @@ App Starting Step -> Lib / main.dart
    To ensure the reliability, visual integrity, and performance of the application, a full test suite was implemented, covering unit, golden, and integration testing requirements.
    Unit Test, Golden Test, Integration Test and CI workflow.
     Result:- All tests pass successfully,
-<img width="1680" height="1050" alt="Screenshot 2025-10-05 at 23 52 33" src="https://github.com/user-attachments/assets/6a43e2fa-0e84-4ebc-bc40-19d59ad51885" />
-<img width="1680" height="1050" alt="Screenshot 2025-10-06 at 12 14 40" src="https://github.com/user-attachments/assets/db6c65ec-72bc-4917-bd1d-6a8cb1e5221b" />
 
 
    
