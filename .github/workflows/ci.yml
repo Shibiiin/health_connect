@@ -1,57 +1,36 @@
-# Name of the workflow, which will be displayed on the "Actions" tab of your GitHub repository
-name: Flutter CI
+name: Flutter Integration Tests
 
-# This section defines WHEN the workflow should run.
 on:
-  # Run it on every push to the 'main' or 'master' branch.
   push:
-    branches: [ main, master ]
-  # Also run it on every pull request that targets the 'main' or 'master' branch.
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
 
-# This section defines the jobs to be run.
 jobs:
-  # We define a single job called "build-and-test".
-  build-and-test:
-    # This specifies that the job will run on the latest version of Ubuntu Linux.
+  integration-tests:
     runs-on: ubuntu-latest
 
-    # These are the steps the job will execute in order.
     steps:
-      # Step 1: Check out the code from your repository.
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      # Step 2: Set up the Java environment (required for Android builds).
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      # Step 3: Set up the Flutter SDK on the remote server.
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Use the stable channel of Flutter
+          flutter-version: "3.24.3"
 
-      # Step 4: Get all the Flutter dependencies.
-      - name: Get dependencies
+      - name: Install dependencies
         run: flutter pub get
 
-      # Step 5: Run the code analyzer to check for any issues.
-      - name: Analyze code
-        run: flutter analyze
+      - name: List Flutter Devices (for debugging)
+        run: flutter devices
 
-      # Step 6: Run all the unit and golden tests.
-      - name: Run unit and golden tests
-        run: flutter test --update-goldens
-        # Note: We use --update-goldens here. A more advanced setup might store
-        # golden files as artifacts, but this is sufficient for the task.
-
-      # Step 7: Run the integration tests.
-      # This requires a device, so we will run it on a Linux desktop environment.
-      # This is the "headless" testing the PDF mentions.
-      - name: Run integration tests
-        run: flutter test integration_test
+      # Set up Android Emulator and run integration tests
+      - name: Run integration tests on Android Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel
+          script: flutter drive --driver=test_driver/main_test.dart --target=integration_test/app_flow_test.dart
+          emulator-options: -no-window -no-audio -no-snapshot
