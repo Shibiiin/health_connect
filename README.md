@@ -37,7 +37,7 @@ App Starting Step -> Lib / main.dart
 
 4. Quality Assurance and Testing
    To ensure the reliability, visual integrity, and performance of the application, a full test suite was implemented, covering unit, golden, and integration testing requirements.
-   Unit Test, Golden Test, Integration Test and CI workflow.
+   Unit Test, Golden Test, Integration Test.
     Result:- All tests pass successfully,
 
 
