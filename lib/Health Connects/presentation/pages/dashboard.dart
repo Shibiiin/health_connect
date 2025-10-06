@@ -208,9 +208,18 @@ class DashboardWidget extends StatelessWidget {
           Positioned(
             bottom: 16,
             right: 16,
-            child: PerformanceHud(
-              buildTimeMs: controller.averageBuildTimeMs,
-              fps: controller.fps,
+            child: Selector<DashboardController, String>(
+              selector: (_, ctrl) => '${ctrl.averageBuildTimeMs}|${ctrl.fps}',
+              builder: (context, perfString, child) {
+                final perfController = Provider.of<DashboardController>(
+                  context,
+                  listen: false,
+                );
+                return PerformanceHud(
+                  buildTimeMs: perfController.averageBuildTimeMs,
+                  fps: perfController.fps,
+                );
+              },
             ),
           ),
       ],
