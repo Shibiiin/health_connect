@@ -12,11 +12,15 @@ App Starting Step -> Lib / main.dart
    Grant Permissions: Upon first launch, the app will navigate to the Permissions Screen. Tap "Grant Access" to open the Health Connect system dialog.
    Verify Data Source: Ensure a fitness app (e.g., Samsung Health or Google Fit) is connected to Health Connect and has granted permission to write Steps and Heart Rate data.
    Simulation Source (SimSource): For testing and development, you can toggle the play/stop icon in the AppBar to activate the internal SimSource, which generates fake data for deterministic testing.
+
+
 2. Architecture and Technical Decisions
-   A. State Management
+
+    A. State Management
    Choice: [State Management Library you used, Provider].
    Reasoning: A single DashboardController (ChangeNotifier) manages all application state (steps, heart rate, chart data). This separates all business logic (data processing, aggregation) from the UI, ensuring a clean and testable architecture.
-   B. Realtime Data Flow
+
+    B. Realtime Data Flow
    Method Used: Polling (via Platform Channels)
    Implementation:
    A Flutter EventChannel is used to create a bridge to the native Android side.
@@ -24,13 +28,19 @@ App Starting Step -> Lib / main.dart
    This loop runs every 10 seconds (delay(10000)), checking Health Connect for new data.
    It uses the startTime of the last successful read to only fetch new data records, preventing duplication and ensuring minimal latency (Target: ≤ 10s).
    The correct, official HealthConnectClient.getSdkPermissionController() is used for the permission flow.
-   C. Dashboard UI and Charts (Constraints)
+
+    C. Dashboard UI and Charts (Constraints)
    Custom Chart Solution: The charts were built from scratch using CustomPainter. Third-party charting libraries were strictly avoided to meet the project constraints.
    Interactivity: Charts support pan (drag), pinch-to-zoom (scale), and a dedicated tooltip that shows the exact timestamp/value upon tapping.
    Anti-Plagiarism / Authenticity: The project includes a projectSalt constant in "lib/app_constant.dart", derived from SHA256("${packageName}:${firstGitCommitHash}"), as required for authenticity verification. 
-3. Quality Assurance and Testing
+
+
+4. Quality Assurance and Testing
    To ensure the reliability, visual integrity, and performance of the application, a full test suite was implemented, covering unit, golden, and integration testing requirements.
    Unit Test, Golden Test, Integration Test and CI workflow.
-    Result:- All tests pass successfully, 
-![Screenshot 2025-10-05 at 23.52.33.png](../../Screenshot%202025-10-05%20at%2023.52.33.png)
-![Screenshot 2025-10-06 at 00.47.11.png](../../Screenshot%202025-10-06%20at%2000.47.11.png)
+    Result:- All tests pass successfully,
+<img width="1680" height="1050" alt="Screenshot 2025-10-05 at 23 52 33" src="https://github.com/user-attachments/assets/6a43e2fa-0e84-4ebc-bc40-19d59ad51885" />
+<img width="1680" height="1050" alt="Screenshot 2025-10-06 at 12 14 40" src="https://github.com/user-attachments/assets/db6c65ec-72bc-4917-bd1d-6a8cb1e5221b" />
+
+
+   
