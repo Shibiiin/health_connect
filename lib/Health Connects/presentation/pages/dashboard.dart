@@ -149,15 +149,15 @@ class DashboardWidget extends StatelessWidget {
           ),
         ),
 
-        // if (kDebugMode)
-        Positioned(
-          bottom: 16,
-          right: 16,
-          child: PerformanceHud(
-            buildTimeMs: controller.averageBuildTimeMs,
-            fps: controller.fps,
+        if (kDebugMode)
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: PerformanceHud(
+              buildTimeMs: controller.averageBuildTimeMs,
+              fps: controller.fps,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -139,12 +139,17 @@ class DashboardController extends ChangeNotifier {
 
   void _generateFakeData() {
     final now = DateTime.now();
+
     _totalSteps += _random.nextInt(20) + 5;
     _currentHeartRate = 70 + _random.nextInt(15) - 7;
     _lastHeartRateTimestamp = now;
 
     stepDataPoints.add(
-      DataPoint(timestamp: now, value: _totalSteps.toDouble(), type: 'Step'),
+      DataPoint(
+        timestamp: now,
+        value: (_random.nextInt(20) + 5).toDouble(),
+        type: 'Step',
+      ),
     );
     heartRateDataPoints.add(
       DataPoint(
@@ -154,10 +159,13 @@ class DashboardController extends ChangeNotifier {
       ),
     );
 
-    if (stepDataPoints.length > 100) stepDataPoints.removeAt(0);
-    if (heartRateDataPoints.length > 100) heartRateDataPoints.removeAt(0);
+    if (stepDataPoints.length > 100) {
+      stepDataPoints.removeAt(0);
+    }
+    if (heartRateDataPoints.length > 100) {
+      heartRateDataPoints.removeAt(0);
+    }
 
-    // savePersistence();
     notifyListeners();
   }
 
