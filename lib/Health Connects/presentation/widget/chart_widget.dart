@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
+import 'package:provider/provider.dart';
 
 import '../../domain/entities/data_point.dart';
 import 'line_chart_widget.dart';
@@ -19,6 +21,8 @@ class ChartContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.read<DashboardController>();
+
     return Container(
       decoration: BoxDecoration(
         gradient: gradient,
@@ -50,20 +54,30 @@ class ChartContainer extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: LineChart(
-                data: data,
-                gradient: LinearGradient(
-                  colors: [
-                    gradient?.colors.first.withValues(alpha: 0.4) ??
-                        Colors.white,
-                    gradient?.colors.last.withValues(alpha: 0.0) ??
-                        Colors.transparent,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                startYAxisAtZero: startYAxisAtZero,
-              ),
+              child: data.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No data to display',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 14,
+                        ),
+                      ),
+                    )
+                  : LineChart(
+                      data: data,
+                      gradient: LinearGradient(
+                        colors: [
+                          gradient?.colors.first.withValues(alpha: 0.4) ??
+                              Colors.white,
+                          gradient?.colors.last.withValues(alpha: 0.0) ??
+                              Colors.transparent,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                      startYAxisAtZero: startYAxisAtZero,
+                    ),
             ),
           ],
         ),

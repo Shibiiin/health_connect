@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:health_connect/Health%20Connects/presentation/widget/common/custom_print.dart';
 
 import '../../domain/entities/data_point.dart';
 
@@ -13,12 +14,14 @@ class HealthRepository {
   );
 
   Stream<DataPoint> get healthDataStream {
+    alertPrint("Health Data stream");
     return _eventChannel.receiveBroadcastStream().map((dynamic event) {
       final Map<String, dynamic> dataMap = Map<String, dynamic>.from(event);
       final String type = dataMap['type'];
       final num value = dataMap['value'];
       final int timestamp = dataMap['timestamp'];
 
+      successPrint("DATA POINT TYPE: ${type} - Value${value}");
       return DataPoint(
         type: type,
         timestamp: DateTime.fromMillisecondsSinceEpoch(timestamp),
@@ -32,6 +35,7 @@ class HealthRepository {
       final bool? granted = await _methodChannel.invokeMethod(
         'requestPermissions',
       );
+      successPrint("Permission Granted on the Repository");
       return granted ?? false;
     } on PlatformException catch (e) {
       debugPrint("Failed to request permissions: '${e.message}'.");
@@ -41,6 +45,7 @@ class HealthRepository {
 
   Future<bool> checkPermissions() async {
     try {
+      alertPrint("Checking Permission");
       final bool? granted = await _methodChannel.invokeMethod(
         'checkPermissions',
       );

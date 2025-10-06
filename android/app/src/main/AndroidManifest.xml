@@ -37,7 +37,9 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-
+<!--            <meta-data-->
+<!--                android:name="health_permissions"-->
+<!--                android:resource="@array/health_permissions" />-->
             <!-- Theme visible before Flutter renders -->
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
