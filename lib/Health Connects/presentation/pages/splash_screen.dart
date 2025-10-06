@@ -52,7 +52,7 @@ class HealthSplashScreenState extends State<HealthSplashScreen>
 
     _controller.forward();
 
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 2), () {
       checkPermissionsAndNavigate(context);
     });
   }
