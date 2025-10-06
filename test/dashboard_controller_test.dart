@@ -1,8 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:health_connect/Health%20Connects/presentation/manager/dashboard_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() {
+    SharedPreferences.setMockInitialValues({}); // Mock empty preferences
+  });
 
   group('DashboardController Unit Tests', () {
     test('Initial state is correct', () {
